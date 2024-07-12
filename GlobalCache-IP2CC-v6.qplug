@@ -1,0 +1,401 @@
+-- GlobalCache IP2CC Plugin
+-- by Matty
+-- July 2024
+
+-- Information block for the plugin
+
+PluginInfo = {
+  Name = "Matty~GlobalCache~IP2CC-v6",
+  Version = "6.0",
+  BuildVersion = "6.5.0.0",
+  Id = "083a1d2c-7473-4748-a79e-c31602a6fb77",
+  Author = "Matt Gililland",
+  Description = "Control of Relay Box via TCP/IP"
+}
+
+Signature = "iVBORw0KGgoAAAANSUhEUgAAAEsAAABYCAYAAAC9DArfAAAAxnpUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjabVBBDsMgDLvzij0BkpCG59CWSfvBnj8D6dRWtYQJdmtCQvt+3uHVQUmC5MW0qEZAihSqKCxO1MEpyuABWd1LVz3k4yeCxNh5Hk39+0NP/4C5VVT5FGSbG+vVKOL5dgvyi7h3RCh2DyoexDSN5AF1PitqseX8hLXFK2yu0GlrIzsmv+1+lgXT2zNEJmoMGcysswHuiwNXGASGQENCHVnBgHeCgTzN6UD4AZhMWgmrsdciAAABhGlDQ1BJQ0MgcHJvZmlsZQAAeJx9kT1Iw0AcxV9TS0UqDlZQcchQneyiIo6likWwUNoKrTqYXPoFTRqSFBdHwbXg4Mdi1cHFWVcHV0EQ/ABxdXFSdJES/5cUWsR4cNyPd/ced+8AoVllqtkTA1TNMtKJuJjLr4rBV4QwhAAEjEjM1JOZxSw8x9c9fHy9i/Is73N/jn6lYDLAJxLHmG5YxBvEs5uWznmfOMzKkkJ8Tjxp0AWJH7kuu/zGueSwwDPDRjY9TxwmFktdLHcxKxsq8QxxRFE1yhdyLiuctzir1Tpr35O/MFTQVjJcpzmGBJaQRAoiZNRRQRUWorRqpJhI037cwz/q+FPkkslVASPHAmpQITl+8D/43a1ZnJ5yk0JxIPBi2x/jQHAXaDVs+/vYtlsngP8ZuNI6/loTmPskvdHRIkfAwDZwcd3R5D3gcgcYftIlQ3IkP02hWATez+ib8sDgLdC35vbW3sfpA5ClrpZvgINDYKJE2ese7+7t7u3fM+3+fgBd6HKeIGM97QAADlVpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDQuNC4wLUV4aXYyIj4KIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgIHhtbG5zOkdJTVA9Imh0dHA6Ly93d3cuZ2ltcC5vcmcveG1wLyIKICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICB4bXBNTTpEb2N1bWVudElEPSJnaW1wOmRvY2lkOmdpbXA6YjNjZDVkNzUtOTdjMy00OWU2LTliNTAtOTkzMTNkMDE0MDBmIgogICB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmViZTlkMTQ4LWE2OTAtNDZhYi1hODhiLTI0NTc5ZDg5Mjk2OSIKICAgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjE2YTliYmY1LTU5M2YtNGYzMi1iMjc3LWRlMmE2Yzg5NjM1ZSIKICAgZGM6Rm9ybWF0PSJpbWFnZS9wbmciCiAgIEdJTVA6QVBJPSIyLjAiCiAgIEdJTVA6UGxhdGZvcm09IldpbmRvd3MiCiAgIEdJTVA6VGltZVN0YW1wPSIxNzAzMTM1MTk2NDAzNzIwIgogICBHSU1QOlZlcnNpb249IjIuMTAuMzYiCiAgIHRpZmY6T3JpZW50YXRpb249IjEiCiAgIHhtcDpDcmVhdG9yVG9vbD0iR0lNUCAyLjEwIgogICB4bXA6TWV0YWRhdGFEYXRlPSIyMDIzOjEyOjIwVDIzOjA2OjMzLTA2OjAwIgogICB4bXA6TW9kaWZ5RGF0ZT0iMjAyMzoxMjoyMFQyMzowNjozMy0wNjowMCI+CiAgIDx4bXBNTTpIaXN0b3J5PgogICAgPHJkZjpTZXE+CiAgICAgPHJkZjpsaQogICAgICBzdEV2dDphY3Rpb249InNhdmVkIgogICAgICBzdEV2dDpjaGFuZ2VkPSIvIgogICAgICBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjdhYWI5NDQ0LTRiODEtNDM4Ni05MmMwLWNlNWVkMjY1MDNhZSIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iR2ltcCAyLjEwIChXaW5kb3dzKSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyMy0wOS0yNFQwODozNjoyMSIvPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJzYXZlZCIKICAgICAgc3RFdnQ6Y2hhbmdlZD0iLyIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo5ZmIwNzU0Yy01NDI5LTRkMDYtOWRiNy1kYzllODdkZmU3NzMiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkdpbXAgMi4xMCAoV2luZG93cykiCiAgICAgIHN0RXZ0OndoZW49IjIwMjMtMTItMjBUMjM6MDY6MzYiLz4KICAgIDwvcmRmOlNlcT4KICAgPC94bXBNTTpIaXN0b3J5PgogIDwvcmRmOkRlc2NyaXB0aW9uPgogPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSJ3Ij8+tgHnSwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+cMFQUGJAkwSooAABQLSURBVHja7Vx7OJVZ+7733s6HHHJKSSgdMNkVEppySIow2TvEOESpkFSaauRXzWeoryE6mHRQGL4cSr4S8UXDVCSaFGUSctgmZyWHva3vj+wuX5NGaGr6ua/r/ed93+dZ6733s9Z6nvtd7wbGMIYxfGRQ/o6dPn78OKW2thYAICEhAR8f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"
+
+logo = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAwnpUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjabVBBDgMhCLz7ij5BGFR8jttuk/6gzy8qu1nbTuKAjBmBsL9fz3DrYJIgqWiuOUeDVKncLNE40QZTlMEDWVyjtR5Oga0Ei5hXzf7+qNNpMEOzLF2M9O7CtgrVP2D9MuIZ0Dvq+cONqhuBp0Bu0JqPUrVcR9j2uELnCZ1E17Z/7sW290j2D5h3EKIxkGcD6EcCmiVpcLaHhGI5IMaCY1RbyL89HQgf8fRZJWFbYJ4AAAGEaUNDUElDQyBwcm9maWxlAAB4nH2RPUjDQBzFX1vbilQcLCLiEKE62UVFHEsVi2ChtBVadTC59AuaNCQpLo6Ca8HBj8Wqg4uzrg6ugiD4AeLs4KToIiX+Lym0iPHguB/v7j3u3gHeZpUpRk8MUFRTTyfiQi6/KgRf4UcAQxhDQGSGlswsZuE6vu7h4etdlGe5n/tz9MsFgwEegTjGNN0k3iCe3TQ1zvvEYVYWZeJz4kmdLkj8yHXJ4TfOJZu9PDOsZ9PzxGFiodTFUhezsq4QzxBHZEWlfG/OYZnzFmelWmfte/IXhgrqSobrNEeRwBKSSEGAhDoqqMJElFaVFANp2o+7+Edsf4pcErkqYORYQA0KRNsP/ge/uzWK01NOUigO+F8s62McCO4CrYZlfR9bVusE8D0DV2rHX2sCc5+kNzpa5AgY2AYurjuatAdc7gDDT5qoi7bko+ktFoH3M/qmPDB4C/StOb2193H6AGSpq+Ub4OAQmChR9rrLu3u7e/v3TLu/H3HKcqbwhvYsAAANdmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNC40LjAtRXhpdjIiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iCiAgICB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIgogICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgeG1sbnM6R0lNUD0iaHR0cDovL3d3dy5naW1wLm9yZy94bXAvIgogICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgIHhtcE1NOkRvY3VtZW50SUQ9ImdpbXA6ZG9jaWQ6Z2ltcDo1N2NmMGUwNC04NWVkLTQ3ZGQtOWYzNy1kOGEwYmY0MTU4OGUiCiAgIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ODk4ZjZiZDEtMDAxYi00NTI4LTlkM2QtMjQ5NDQ5MDNkNzAwIgogICB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6Y2NhZWFjZWMtY2VjNC00MzA2LTkwZjYtM2I3MzBlZWYwODI0IgogICBkYzpGb3JtYXQ9ImltYWdlL3BuZyIKICAgR0lNUDpBUEk9IjIuMCIKICAgR0lNUDpQbGF0Zm9ybT0iV2luZG93cyIKICAgR0lNUDpUaW1lU3RhbXA9IjE3MTUwMzQ4ODgwMDU3ODIiCiAgIEdJTVA6VmVyc2lvbj0iMi4xMC4zNiIKICAgdGlmZjpPcmllbnRhdGlvbj0iMSIKICAgeG1wOkNyZWF0b3JUb29sPSJHSU1QIDIuMTAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjQ6MDU6MDZUMTc6MzQ6NDUtMDU6MDAiCiAgIHhtcDpNb2RpZnlEYXRlPSIyMDI0OjA1OjA2VDE3OjM0OjQ1LTA1OjAwIj4KICAgPHhtcE1NOkhpc3Rvcnk+CiAgICA8cmRmOlNlcT4KICAgICA8cmRmOmxpCiAgICAgIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiCiAgICAgIHN0RXZ0OmNoYW5nZWQ9Ii8iCiAgICAgIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6NDdlYTQ3MjEtZWQ1ZC00NmIwLWI5ZDYtMTY1YzdhNjQwMGNjIgogICAgICBzdEV2dDpzb2Z0d2FyZUFnZW50PSJHaW1wIDIuMTAgKFdpbmRvd3MpIgogICAgICBzdEV2dDp3aGVuPSIyMDI0LTA1LTA2VDE3OjM0OjQ4Ii8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PqDHp98AAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfoBQYWIi/PgEdYAAAOwklEQVR42u2deVRV1eLHP+cODHdgviAoMyIIIoFTiqYppjnguOxlZWpO5etVVlq9sln7lWU+n0scXz/LF5WZpj2Hp74cyMQQURCQQTMBQURmvXDvfX/cQS760zLAfrW/a7FYd5999j33+zl73vscif9Ds7bUaYFJwAggFvADHLgDqjyXw9F1839VGj2mvYO7fwR3SHqgGMgAtgMpyUnqmhtFVNwAhBKYBywAXBFqDTkAQZa/McB7s7bULQaWJCepG5tHlLWA4QccAhYJGG0qV4vHhyye2yS1gHEQCLaG1VUUU56fTuWZkzQ21IDJdEeuvrGhlvrys78qDZUuEKWz5s7YL0konbW4B0WjC4tD7WnHoAhISE5SF9uAWIqpQ0BPAIP+CgUHvuDswc/FvdwGCkyYSGj/CcgdnKxBaUC/5CR1o7XImtccxvFNSwSMNtTZg59zfNMSDPor1qCeFgZIltbUOWudkbfnYwGjHXNK+OCHrB+rAH+ZpWnraq0zBIz2zSl1FcXNK/pJMks/A4Dy/HThUjurhecjZJZOn7kDduakcKi9O732nsfKLD1wS/OyRjjU7k16O8/9ZHbDIXeon/GHlr3nDjLhyG9LAogAIiSACCBCtytFaybm7OFHQ2UJ/n3G4BHcjTMHN9FwqRhjk56mK3XC7fYCovYOpMvwGTRdqaP8dDoRiVNAknDzC+P7Nc/T49G3qSjKJG/HakyGJuF6WxZZ3lED6DV1EZ6B0ZxJ3UJw3zEgmadZHNSuBPYbR+XZbAJ6DKP3jPdRqsS8V5sBcekUSdSoOSic1NRfLgOTqeXkC14h3SnO3AeA1ieQuyYvtAETamUgEcMfQ+GoAqC2/By6iN7XxVG5+3Cl8gKNDbUAuPqFEjJwsnC+tesQmcKBiwXHuVh4HIDLZ7OQO6ooOLjpBnGVFOz/DKXaXFxdqa4Qzrc2kMB+4+2W1VQWncAjKBqNl/91cRsqS3HQuOPWMdwc0CmC2rIzVJ87JQi0FhDP0Fg7IGe/34ZHYBQa3fVAqi8U4eTiiUdQVLPz7xJAWrMOkSsd7T4bDXpkCuUN40oyOcZGvf35Ds7C/dYE0qRvsDdY4YixSX/DuCZDU/MVFubzLZW8UCsVWReyU9HXVtk+6+urKMtJo7b8/HVxq37KQ19fjclotIWV5R4W7rcmkPNp/8LJVYckyQFQOmupKTuDrEVRBlBdko+zu7etdVV/qYT6srPC/dYEYjI24eIbimdQNAAaXUcunz9NUJ+RLeIZOHMghZCE8bY+S87O9cL5tugY5mxfib6+2gIkgLLs1OumgesqStD6hdtgVBRlcu7wV8L5tgBSf/EcGSmLuVJdgZOLJ44uXtS0KIrKTx/FN+YeM4zCTDI2vilcbysgAFU/ZnF41dOUnDxAp7hECr79DJPRYO4QXi7jp6M70HoHcnrvJ6RveBlj01XhelvUIc3VWFfFyU3vIXdUYbjaQOaXMjyCYzj73Vc01ldzeOWTwun2BGKV4Wq9uUmbdYCyrAPC3TtRZAkJIAKIkAAigAgJIEICiAAiJIAIIEICiAAiJIAIIEICiJAAIoAICSACiJAAIoAICSACiNCd1m2ty3r9uZn0u7s3kiRxLCOT+W8uo8lgZN3SV0k9nMaaT7fbxf/L9IkMHzoYZ2dncvNOs3DRMkoqqnnz+Vl0i+4KQE1NLStW/y+pGbm282Y8MJKR9yeyfkMKX+1OBWBwnxjmzJjCuGnPILvJbt6BPaOZO3sqHXy8KSm9wMq1G9jznXk/5PAB8cx+7BF27t7Hig3X1hlPGX8fkyaMQaNRk59fyBvvLickwI8Z0x5i0oznbZuHN65czMaUL/l67xFSVv8Pzk7XVvynH8vktQ/Wtl8OefHPU5g0YSzZ2TmkHU0nMqIL3u4uAERGdKFTR1+7+GMS+/LErOlkncpl85btxERHsfjV5wAIDQlGq9GQdSoXHx9vXvvrc3bnJg6+h4guXRieOMgWpvPyICoq8qaP9jIBby5cgEqlYtu/doEEd8Vc2043fOi9dOkSTuKQgbawbp39WfDsk5SVl7Nz1x58fTvQOSTA/H2REZZUzWvJoyIj8PHWASaiIiMov1hB5olsMk9kk55xon1zSHjnUE7l5vHnv777s+JHhIdSU1PLvFc/ACA4OJAu4WG24xfKynlx0QpeeXo6Y0bdf+3C5DLCO4fxfdoPdO36y57ZbjSa0Om8WLFqHRu37gU22B2P7hrJkbR04mJj0Dg7Uttwlaguocjlcqb+ZSEmkwn+9hEAD4wceMvv++77H1ibsv3OFVlGg3knVJPlv1wmId2k+DBx7XY2mUw0j+nn58uKxS8QFxvD6fwCW/j44QOQyWSsXv8J61YupXdMZ77PPP3zL1ICY7MdW1ZFBvvRsaMvCxYuYv3KD3hg9BDWWMw0WX6TXGb/WxQKOW8+Pwvrg8AVSnvb7u4dT1BAJwA2b9tF+qmi9q/U3bRqitJ3c+bYv1nwxMO3fQFOjo54erhjMBjw9e2As6N54+g9CXdTUnoBTw83qmtqGDVscKvcgWNHJFJVVY1fBx2lF8ro26fnrU2Sy4mJjiKmW1dioruikMvtjgcF+JuPdeuKt5dH++cQgOq6emY8/gxLFr9209xxKxUWneFPsxcwoEcU65OXck/vGHbs/4GorhF4enrw+svzUSgVxHbv1ipA4uO6o9FoeP3l+cjlclSqW+8G1l/VM/qRJ5EkCZMJMvfbbzj65+dftVqRJbud4kqtVmM0mjh8PBduwaKxsREHBwc8tOYdVC4aDU1Nhuvi+XbQWX58I7ERQfj5dmDmE8/RrX8Sq9b8g5DgILzcfv7D9E1GEzovT3Panq4M6BGFg1JB57BQPlyeTLf+STw9/xW8dV4M6h2DwWBEJkl0Dzfvs+8VHUaYv/cNC2BJ1nbPavnFOWTvtwd5acEzHNmdglKpxEWrtW9VjR7B8PsSAdi5aw/rN37JuKSR7Nz8EVVVVXT082Xlmn/Y4sd0i+LIrhRcXV04mX2KfUcyeeWp6VysuERqRg6SBJu372XOzGlMShpKRcUllAoFR//9ma1OenjGU5z+sdSWplwmcSzjOI/PmsbY0SPw9vbiP/sPEejvh1Kp4Ivte5Ek2HUwncrLlxk+dCDvLFtLaekFPlm7nEuXKvH19WHp8mQuX666QfVkD+SJWdOYOf0RAM6fL2bc1KdvG4g0a0udrcY9sv5Fqn7MuuVJPaJCuO/e/tTW1ZF65BiSJHHkRD4ThiWgblYEZJzM5Xjej2icHZk89j7c3FzY820qR7MKARhyd3c6+prvwsqqGrbuMW+VHtgrGidHB3YcuPbU54nD+3PufCklZRUM7BtvC29qMvDJ1r03vM4HRg6ic2gQ+UVn+fTrfcRHBhPo78emnQdtcUYM7Ile38ju1Ay0KkcmjxuGp7sbaemZ7Dp0jMAOHvTr1Z2NW/fZznlw9CCOpGeR/1MZD44ehFJx7b4uv3iJb/b/8LMBuAZE0Wvq278OiFDrqSUQMXQixrKEBBABREgAEUCEBJA/gH5xT/3DN57luyM/8OnX+3jpyUdpaGjg/dUpvDV/DgH+nXh47kuMHNSLGVMnYzKZyDqVywuLVvDluvdRKhXU1NaxdPkaXl7wFA/Nfp45U8ajUql4dclqPl7xNh/8fS3PzH2M/IJCFr63mudmP0hC394YDEZ27N5LxaXLzJ09zdYpHD9lLtV1V/64OaSDjzfuruani+p0Xnh5mkc3+/TuQefOoQR08MTHW4fJBKvWfcy9AwdwX0IcAQH+fPC3VZSWXmD+M4+jVCoZMfhuvL119IyPRatyIiw0hOqaOkKCg0jo2weAwMAACovO8sXmbcycPgU3Vy0VFZcY+/Bcxj/65O8Kxm0XWT3iu/PavMcICjAPxHUPDwSgoLCIiaPN41hXr17lZG4hJqMRuUyG0WjiP2lZ7Nufilqt5nR+AfGx3ejSOQwfHx9GJfajpKSUcSOHcOJkFs5OzkQGmx/KXFVVTXHpBduosqeHO0/P/BOPPTBK1CEAjg4OqFUqFJYxnKT7B4MJnJ0c6Rl/FwBdIyPYuXkDpwsK+Wb/0evSOJqeSVhYCG5urlRUXGJY4r2cys0jPi4WrVZDk6GJsSOHAjBqxDCSl7/Hps1bAQmZXI5apcJZ5SSAABz6Lo1n31hGfqF5Zuyu2Biyc3LJys4hLCwUJMg+lUPKF5tx0Wrt5r87+OgwGAxs3XWAoMBAyssvkl9QSI+4WA6mphHg34m8vHzy8vKJj4sB4OtvdpBx/ARarXn4vaysnGffWMZbyz4SQJAk2xyIBMhkcjp29GP+G0t5+d1V1NTUEB4WCpLE6++vRaNRM3/OZDQaNQe2bWDG1If5YvPXVNU1cPHiRU7l5HHs+An0ej2ulvph4ZI1vLVkBSHBwbaVJa8v/pAhg+7Bz9eHyIhwDmzbwIFtG0jsG/u7AvKLR3sNRhMyCSRJwmi59Y0mEwqZzHZcwjw/LZeZ45hM5nkLa5jVZGtaSBIGoxG5JGE0YZvTbrJMGiGBTJIwGK99n1VK+f/vlnvL0d5f3OxtvgDAamzz9VEtFwjIbDlKumlaVqDyZtEULcy2xpfz+327gugYCiBCAogAIiSACCBCbQVEb9fpE2rnnqCd53oZUGzrZDlrhUHtrBaeF8uADOsnd8ubDoTaTy08z5ABtlXCurA44VA7q4Xn22VAClAFoPb0IzBhonCpnRSYMLH5izirgBRZcpK6BlhsDQ3tPwHP8F7CrTaWZ3gvQvtPaB60ODlJXWNt9i4B0gDkDk50Hz9P5JQ2zhndx89r/qK0NAuDa8Oms7bU+QEHgWBrWF1FMeX56VSeOUljQw033WnZhmpsqKW+/Ne9s0qlC0TprLkzBCQJpbMW96BodGFxLd8XXAQkJCepi+2ANIPyFdDzt3RHVZ7L4ei6+b8qjR7T3rF7EeZvRGnAGCuM63rqlgP9gBesFb1Qm6jK4nG/5jDgBhNUyUnqRmDxrC11fwcmASOAWMAPcBBe3pb0lg54hqWbkWJpTF2n/wITZw/Y6ZK/YwAAAABJRU5ErkJggg=="
+
+-- Define the color of the plugin object in the design
+function GetColor(props)
+  return { 155, 66, 245 }
+end
+
+-- The name that will initially display when dragged into a design
+function GetPrettyName(props)
+  return "GlobalCache\x0DIP2CC-v6"
+end
+
+-- Define User configurable Properties of the plugin
+function GetProperties()
+  local props = {}
+  table.insert(props, {
+    Name = "Debug Print",
+    Type = "enum",
+    Choices = {"None", "Tx/Rx", "Tx", "Rx", "Function Calls", "All"},
+    Value = "All"
+  })
+  return props
+end
+
+-- Optional function to update available properties when properties are altered by the user
+function RectifyProperties(props)
+  if props.plugin_show_debug.Value == false then 
+    props["Debug Print"].IsHidden = true 
+  end
+  return props
+end
+
+--Layout of controls and graphics for the plugin UI to display
+function GetControlLayout(props)
+  local layout = {}
+  local graphics = {}
+  
+  ---  action   ----
+  
+  layout["address"] = {
+    PrettyName = "IP Address",
+    Style = "Text",
+    TextBoxStyle = "Normal",
+    Position = {100, 10},
+    Size = {100, 16}
+  }
+  layout["port"] = {
+    PrettyName = "Port",
+    Style = "Text",
+    TextBoxStyle = "Normal",
+    Position = {100, 30},
+    Size = {100, 16}
+  }
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "IP Address:",
+    Position = {5, 5},
+    Size = {80, 16},
+    FontSize = 14,
+    HTextAlign = "Right"
+  })
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "Port:",
+    Position = {5, 25},
+    Size = {80, 16},
+    FontSize = 14,
+    HTextAlign = "Right"
+  })
+  
+  
+  
+  layout["rly1"] = {
+      PrettyName = "Relay 1",
+      Style = "Button",
+      Legend = "Push",
+      Position = {30,60},
+      Size = {50,16},
+      Color = {0,0,0}
+    }  
+    layout["rlyled1"] = {
+      PrettyName = "Relay 1 LED",
+      Style = "LED",
+      Position = {80,60},
+      Size = {15,15},
+      Color = {255,0,0}
+    }
+    layout["rlytime1"] = {
+      PrettyName = "Timer 1",
+      Style = "Text",
+      TextBoxStyle = "Normal",
+      Position = {100, 60},
+      Size = {20, 16}
+    }
+    table.insert(graphics, {
+      Type = "Text",
+      Text = "Relay 1 Pulse Time",
+      Position = {125, 60},
+      Size = {110, 16},
+      FontSize = 12,
+      HTextAlign = "Right"
+    })
+    
+  
+    layout["rly2"] = {
+      PrettyName = "Relay 2",
+      Style = "Button",
+      Legend = "Push",
+      Position = {30,80},
+      Size = {50,16},
+      Color = {0,0,0}
+    }
+    layout["rlyled2"] = {
+      PrettyName = "Relay 2 LED",
+      Style = "LED",
+      Position = {80,80},
+      Size = {15,15},
+      Color = {255,0,0}
+    }
+    layout["rlytime2"] = {
+      PrettyName = "Timer 2",
+      Style = "Text",
+      TextBoxStyle = "Normal",
+      Position = {100, 80},
+      Size = {20, 16}
+    }
+    table.insert(graphics, {
+      Type = "Text",
+      Text = "Relay 2 Pulse Time",
+      Position = {125, 80},
+      Size = {110, 16},
+      FontSize = 12,
+      HTextAlign = "Right"
+    })
+    
+    
+    layout["rly3"] = {
+      PrettyName = "Relay 3",
+      Style = "Button",
+      Legend = "Push",
+      Position = {30,100},
+      Size = {50,16},
+      Color = {0,0,0}
+    }
+    layout["rlyled3"] = {
+      PrettyName = "Relay 3 LED",
+      Style = "LED",
+      Position = {80,100},
+      Size = {15,15},
+      Color = {255,0,0}
+    }
+    layout["rlytime3"] = {
+      PrettyName = "Timer 3",
+      Style = "Text",
+      TextBoxStyle = "Normal",
+      Position = {100, 100},
+      Size = {20, 16}
+    }
+    table.insert(graphics, {
+      Type = "Text",
+      Text = "Relay 3 Pulse Time",
+      Position = {125, 100},
+      Size = {110, 16},
+      FontSize = 12,
+      HTextAlign = "Right"
+    })
+    
+  
+  table.insert(graphics,{
+    Type = "Text",
+    Text = "Build Info",
+    FontSize = 12,
+    HTextAlign = "Left",
+    Position = {0, 180},
+    Size = {62, 20}
+  })
+  table.insert(graphics,{
+    Type = "Text",
+    Text = "v" .. PluginInfo.BuildVersion,
+    FontSize = 12,
+    HTextAlign = "Left",
+    Position = {0, 200},
+    Size = {62, 20}
+  })
+  
+  table.insert(graphics,{
+    Type="Image",
+    Image=logo,
+    Position={150,140},
+    Size={80,80}
+  })
+  
+  table.insert(graphics,{
+    Type="Image",
+    Image=Signature,
+    Position={0,160},
+    ZOrder = 1,
+    Size={20,23}
+  })
+  return layout, graphics
+end
+
+-- Defines the Controls used within the plugin
+function GetControls(props)
+  local ctrls = {}
+  
+    table.insert(ctrls, {
+      Name = "address",
+      ControlType = "Text",
+      DefaultValue = 'Enter and IP Address' 
+    })
+    table.insert(ctrls, {
+      Name = "port",
+      ControlType = "Knob",
+      ControlUnit = "Integer",
+      Min = 1,
+      Max = 65535,
+      DefaultValue = 4998
+    })
+  
+    table.insert(ctrls, {
+      Name = "rly1",
+      ControlType = "Button",
+      ButtonType = "Trigger",
+      UserPin = true,
+      PinStyle = "Input",
+      Count = 1
+    })
+    table.insert(ctrls, {
+      Name = "rlytime1",
+      ControlType = "Knob",
+      ControlUnit = "Integer",
+      Min = 0,
+      Max = 60,
+      DefaultValue = 0
+    })
+    table.insert(ctrls, {
+      Name = "rlyled1",
+      ControlType = "Indicator",
+      IndicatorType = "LED",
+      UserPin = false,
+      Count = 1
+    })
+  
+    table.insert(ctrls, {
+      Name = "rly2",
+      ControlType = "Button",
+      ButtonType = "Trigger",
+      UserPin = true,
+      PinStyle = "Input",
+      Count = 1
+    })
+    table.insert(ctrls, {
+      Name = "rlytime2",
+      ControlType = "Knob",
+      ControlUnit = "Integer",
+      Min = 0,
+      Max = 60,
+      DefaultValue = 0
+    })
+    table.insert(ctrls, {
+      Name = "rlyled2",
+      ControlType = "Indicator",
+      IndicatorType = "LED",
+      UserPin = false,
+      Count = 1
+    })
+  
+    table.insert(ctrls, {
+      Name = "rly3",
+      ControlType = "Button",
+      ButtonType = "Trigger",
+      UserPin = true,
+      PinStyle = "Input",
+      Count = 1
+    })
+    table.insert(ctrls, {
+      Name = "rlytime3",
+      ControlType = "Knob",
+      ControlUnit = "Integer",
+      Min = 0,
+      Max = 60,
+      DefaultValue = 0
+    })
+    table.insert(ctrls, {
+      Name = "rlyled3",
+      ControlType = "Indicator",
+      IndicatorType = "LED",
+      UserPin = false,
+      Count = 1
+    })
+  return ctrls
+end
+
+--Start event based logic
+if Controls then
+  
+  
+    address = Controls.address
+    port = Controls.port
+    rly1 = Controls.rly1
+    rly2 = Controls.rly2
+    rly3 = Controls.rly3
+    rlyled1 = Controls.rlyled1
+    rlyled2 = Controls.rlyled2
+    rlyled3 = Controls.rlyled3
+    rlytime1 = Controls.rlytime1
+    rlytime2 = Controls.rlytime2
+    rlytime3 = Controls.rlytime3
+  
+  
+    ----  Sockets   ---
+    sock = TcpSocket.New()
+    sock.ReadTimeout = 0
+    sock.WriteTimeout = 0
+    sock.ReconnectTimeout = 5
+  
+    -- Constants
+    EOL = "\r"                       -- End of line character as defined in device's API
+    EOLCharacter = TcpSocket.EOL.Lf  -- EOL Character lookup for TCPSocket ReadLine
+    
+  
+    
+    sock.EventHandler = function(sock, evt, err)
+      if evt == TcpSocket.Events.Connected then
+        print( "socket connected" )
+      elseif evt == TcpSocket.Events.Reconnect then
+        print( "socket reconnecting..." )
+      elseif evt == TcpSocket.Events.Data then
+        print( "socket has data" )
+        message = sock:ReadLine(TcpSocket.EOL.Any)
+        print('rx=',message)
+        --while (message ~= nil) do
+        print( "reading until CrLf got "..message )
+        message = sock:ReadLine(TcpSocket.EOL.Any)
+        print(message)
+      elseif evt == TcpSocket.Events.Closed then
+        print( "socket closed by remote" )
+      elseif evt == TcpSocket.Events.Error then
+        print( "socket closed due to error", err )
+      elseif evt == TcpSocket.Events.Timeout then
+        print( "socket closed due to timeout" )
+      else
+        print( "unknown socket event", evt ) --should never happen
+      end
+    end
+  
+    rlytime1 = rlytime1.String
+    rlytime2 = rlytime2.String
+    rlytime3 = rlytime3.String
+  
+      
+  Controls.rly1.EventHandler = function()
+    sock:Write("setstate,1:1,1\r")
+    rlyled1.Boolean = true
+    TimeInSeconds = rlytime1
+    Timer.CallAfter(function()
+    sock:Write("setstate,1:1,0\r")
+    rlyled1.Boolean = false
+    end, TimeInSeconds)
+  end
+  
+  Controls.rly2.EventHandler = function()
+    sock:Write("setstate,1:2,1\r")
+    rlyled2.Boolean = true
+    TimeInSeconds = rlytime2
+    Timer.CallAfter(function()
+    sock:Write("setstate,1:2,0\r")
+    rlyled2.Boolean = false
+    end, TimeInSeconds)
+  end     
+  
+  Controls.rly3.EventHandler = function()
+    sock:Write("setstate,1:3,1\r")
+    rlyled3.Boolean = true
+    TimeInSeconds = rlytime3
+    Timer.CallAfter(function()
+    sock:Write("setstate,1:3,0\r")
+    rlyled3.Boolean = false
+    end, TimeInSeconds)
+  end
+  
+  sock:Connect(address.String, port.Value)
+end
